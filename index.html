@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Solar System</title>
+    <script src="script/aframe.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+
+    <script>
+      // Custom component: makes a sphere self-rotate on its own Y-axis
+      AFRAME.registerComponent("self-rotate", {
+        schema: { speed: { type: "number", default: 1 } },
+        tick: function (time, delta) {
+          this.el.object3D.rotation.y += (this.data.speed * delta) / 5000;
+        },
+      });
+    </script>
+  </head>
+
+  <body>
+    <a-scene
+      background="color: #000005"
+      renderer="antialias: true; logarithmicDepthBuffer: true"
+    >
+      <!-- ===== ASSETS ===== -->
+      <a-assets>
+        <img id="tex-stars"   src="texture/2k_stars_milky_way.jpg" />
+        <img id="tex-sun"     src="texture/2k_sun.jpg" />
+        <img id="tex-mercury" src="texture/2k_mercury.jpg" />
+        <img id="tex-venus"   src="texture/2k_venus_surface.jpg" />
+        <img id="tex-earth"   src="texture/2k_earth_daymap.jpg" />
+        <img id="tex-moon"    src="texture/2k_moon.jpg" />
+        <img id="tex-mars"    src="texture/2k_mars.jpg" />
+        <img id="tex-jupiter" src="texture/2k_jupiter.jpg" />
+        <img id="tex-saturn"  src="texture/2k_saturn.jpg" />
+        <img id="tex-saturn-ring" src="texture/2k_saturn_ring_alpha.png" />
+        <img id="tex-uranus"  src="texture/2k_uranus.jpg" />
+        <img id="tex-neptune" src="texture/2k_neptune.jpg" />
+      </a-assets>
+
+      <!-- ===== STARFIELD BACKGROUND ===== -->
+      <a-sky src="#tex-stars" radius="500"></a-sky>
+
+      <!-- ===== LIGHTING ===== -->
+      <!-- Ambient fill so dark sides are not pitch-black -->
+      <a-light type="ambient" color="#223" intensity="0.6"></a-light>
+      <!-- Sun acts as the main point-light source -->
+      <a-light
+        type="point"
+        position="0 0 0"
+        color="#FFF8E7"
+        intensity="2.5"
+        distance="200"
+        decay="1"
+      ></a-light>
+
+      <!-- ===== SUN ===== -->
+      <a-sphere
+        id="sun"
+        position="0 0 0"
+        radius="3.5"
+        material="src: #tex-sun; shader: flat"
+        self-rotate="speed: 0.4"
+      ></a-sphere>
+
+      <!-- ===== MERCURY  (orbit r = 7) ===== -->
+      <!-- Pivot rotates → child planet orbits -->
+      <a-entity
+        id="mercury-pivot"
+        animation="property: rotation; from: 0 0 0; to: 0 360 0;
+                   dur: 2400; loop: true; easing: linear"
+      >
+        <a-sphere
+          position="7 0 0"
+          radius="0.28"
+          material="src: #tex-mercury"
+          self-rotate="speed: 0.8"
+        ></a-sphere>
+      </a-entity>
+
+      <!-- ===== VENUS  (orbit r = 10.5) ===== -->
+      <a-entity
+        id="venus-pivot"
+        animation="property: rotation; from: 0 0 0; to: 0 360 0;
+                   dur: 6200; loop: true; easing: linear"
+      >
+        <a-sphere
+          position="10.5 0 0"
+          radius="0.48"
+          material="src: #tex-venus"
+          self-rotate="speed: 0.6"
+        ></a-sphere>
+      </a-entity>
+
+      <!-- ===== EARTH  (orbit r = 14) ===== -->
+      <a-entity
+        id="earth-pivot"
+        animation="property: rotation; from: 0 0 0; to: 0 360 0;
+                   dur: 10000; loop: true; easing: linear"
+      >
+        <!-- Earth -->
+        <a-sphere
+          id="earth"
+          position="14 0 0"
+          radius="0.52"
+          material="src: #tex-earth"
+          self-rotate="speed: 1"
+        ></a-sphere>
+
+        <!-- Moon orbiting Earth (pivot placed at Earth's position) -->
+        <a-entity
+          position="14 0 0"
+          animation="property: rotation; from: 0 0 0; to: 0 360 0;
+                     dur: 2700; loop: true; easing: linear"
+        >
+          <a-sphere
+            position="1.2 0 0"
+            radius="0.14"
+            material="src: #tex-moon"
+            self-rotate="speed: 0.5"
+          ></a-sphere>
+        </a-entity>
+      </a-entity>
+
+      <!-- ===== MARS  (orbit r = 18) ===== -->
+      <a-entity
+        id="mars-pivot"
+        animation="property: rotation; from: 0 0 0; to: 0 360 0;
+                   dur: 18800; loop: true; easing: linear"
+      >
+        <a-sphere
+          position="18 0 0"
+          radius="0.36"
+          material="src: #tex-mars"
+          self-rotate="speed: 0.9"
+        ></a-sphere>
+      </a-entity>
+
+      <!-- ===== JUPITER  (orbit r = 26) ===== -->
+      <a-entity
+        id="jupiter-pivot"
+        animation="property: rotation; from: 0 0 0; to: 0 360 0;
+                   dur: 118000; loop: true; easing: linear"
+      >
+        <a-sphere
+          position="26 0 0"
+          radius="1.5"
+          material="src: #tex-jupiter"
+          self-rotate="speed: 2.2"
+        ></a-sphere>
+      </a-entity>
+
+      <!-- ===== SATURN  (orbit r = 34) ===== -->
+      <a-entity
+        id="saturn-pivot"
+        animation="property: rotation; from: 0 0 0; to: 0 360 0;
+                   dur: 294000; loop: true; easing: linear"
+      >
+        <!-- Saturn globe -->
+        <a-sphere
+          id="saturn-globe"
+          position="34 0 0"
+          radius="1.2"
+          material="src: #tex-saturn"
+          self-rotate="speed: 2.0"
+        ></a-sphere>
+
+        <!-- Saturn ring (flat disc centred on Saturn) -->
+        <a-ring
+          position="34 0 0"
+          radius-inner="1.6"
+          radius-outer="2.7"
+          rotation="80 0 0"
+          segments-theta="80"
+          material="src: #tex-saturn-ring;
+                    transparent: true;
+                    opacity: 0.85;
+                    side: double;
+                    shader: flat"
+        ></a-ring>
+      </a-entity>
+
+      <!-- ===== URANUS  (orbit r = 41) ===== -->
+      <a-entity
+        id="uranus-pivot"
+        animation="property: rotation; from: 0 0 0; to: 0 360 0;
+                   dur: 840000; loop: true; easing: linear"
+      >
+        <a-sphere
+          position="41 0 0"
+          radius="0.85"
+          material="src: #tex-uranus"
+          self-rotate="speed: 1.4"
+        ></a-sphere>
+      </a-entity>
+
+      <!-- ===== NEPTUNE  (orbit r = 48) ===== -->
+      <a-entity
+        id="neptune-pivot"
+        animation="property: rotation; from: 0 0 0; to: 0 360 0;
+                   dur: 1640000; loop: true; easing: linear"
+      >
+        <a-sphere
+          position="48 0 0"
+          radius="0.8"
+          material="src: #tex-neptune"
+          self-rotate="speed: 1.3"
+        ></a-sphere>
+      </a-entity>
+
+      <!-- ===== ORBITAL RINGS (visual guides) ===== -->
+      <a-torus radius="7"  tube="0.03" segments-tubular="120" color="#ffffff" opacity="0.12" transparent="true" rotation="90 0 0" material="shader:flat"></a-torus>
+      <a-torus radius="10.5" tube="0.03" segments-tubular="120" color="#ffffff" opacity="0.12" transparent="true" rotation="90 0 0" material="shader:flat"></a-torus>
+      <a-torus radius="14"   tube="0.03" segments-tubular="120" color="#ffffff" opacity="0.12" transparent="true" rotation="90 0 0" material="shader:flat"></a-torus>
+      <a-torus radius="18"   tube="0.03" segments-tubular="120" color="#ffffff" opacity="0.12" transparent="true" rotation="90 0 0" material="shader:flat"></a-torus>
+      <a-torus radius="26"   tube="0.03" segments-tubular="120" color="#ffffff" opacity="0.12" transparent="true" rotation="90 0 0" material="shader:flat"></a-torus>
+      <a-torus radius="34"   tube="0.03" segments-tubular="120" color="#ffffff" opacity="0.12" transparent="true" rotation="90 0 0" material="shader:flat"></a-torus>
+      <a-torus radius="41"   tube="0.03" segments-tubular="120" color="#ffffff" opacity="0.12" transparent="true" rotation="90 0 0" material="shader:flat"></a-torus>
+      <a-torus radius="48"   tube="0.03" segments-tubular="120" color="#ffffff" opacity="0.12" transparent="true" rotation="90 0 0" material="shader:flat"></a-torus>
+
+      <!-- ===== CAMERA ===== -->
+      <!-- Positioned above and back to see the whole system; WASD + mouse-look enabled -->
+      <a-entity
+        position="0 55 45"
+        rotation="-50 0 0"
+      >
+        <a-camera
+          wasd-controls-enabled="true"
+          look-controls-enabled="true"
+          fov="75"
+        ></a-camera>
+      </a-entity>
+
+    </a-scene>
+  </body>
+</html>
